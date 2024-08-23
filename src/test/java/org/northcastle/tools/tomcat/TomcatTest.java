@@ -7,6 +7,7 @@
  */
 package org.northcastle.tools.tomcat;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.AfterAll;
@@ -68,10 +69,41 @@ class TomcatTest {
 	 */
 	@Test
 	void testNewInstall() throws Exception {
+		Tomcat.properties.setProperty("configurator.tomcat.image.directory","src/main/resources/10.1.28-Windows-x64");
+		Tomcat.properties.setProperty("configurator.tomcat.image.zip.file","apache-tomcat-10.1.28-windows-x64.zip");
+		Tomcat.properties.setProperty("configurator.tomcat.image.zip.stripdirectories","1");		
 		tomcatClass.remove();
 		tomcatClass.install();
 		assertTrue(tomcatClass.isInstalled());
 	}
+	
+	/**
+	 * @throws Exception
+	 *
+	 */
+	@Test
+	void testNoImageDirectory() throws Exception {
+		Tomcat.properties.remove("configurator.tomcat.image.directory");
+		Tomcat.properties.setProperty("configurator.tomcat.image.zip.file","apache-tomcat-10.1.28-windows-x64.zip");
+		tomcatClass.remove();
+		assertThrows(RuntimeException.class,() -> {
+			tomcatClass.install();	
+		});
+	}
+	
+	/**
+	 * @throws Exception
+	 *
+	 */
+	@Test
+	void testNoImageFile() throws Exception {
+		Tomcat.properties.setProperty("configurator.tomcat.image.directory","src/main/resources/10.1.28-Windows-x64");
+		Tomcat.properties.remove("configurator.tomcat.image.zip.file");
+		tomcatClass.remove();
+		assertThrows(RuntimeException.class,() -> {
+			tomcatClass.install();	
+		});
+	}	
 
 	/**
 	 * @throws Exception
@@ -79,8 +111,12 @@ class TomcatTest {
 	 */
 	@Test
 	void testSuccessiveInstall() throws Exception {
+		// make sure we are configured to install
+		Tomcat.properties.setProperty("configurator.tomcat.image.directory","src/main/resources/10.1.28-Windows-x64");
+		Tomcat.properties.setProperty("configurator.tomcat.image.zip.file","apache-tomcat-10.1.28-windows-x64.zip");
+		Tomcat.properties.setProperty("configurator.tomcat.image.zip.stripdirectories","1");
 		tomcatClass.install();
-		// note that this deletes
+		// note that this deletes the previous install
 		tomcatClass.install();
 		assertTrue(tomcatClass.isInstalled());
 	}

@@ -25,7 +25,7 @@ new Tomcat installation. It is designed to be used with other configuration util
 * If Tomcat is not installed at the target location, and there is a ZIP image of Tomcat configured, it will install that image.
 * It is not necessary to have a TLS/SSL certificate
   * If there is already a certificate installed, and a password was provided, the existing certificate will be used.
-  * If there is a staged certificate this will be used, unless there is already a certificate installed.
+  * If there is a staged certificate, this will be used, unless there is already a certificate installed.
   * If no certificate is provided, a self-signed certificate will be generated and installed.
   * If no certificate password is provided, a self-signed certificate with a random password will be generated and installed.
 * If the server.xml file does not have a TLS/SSL connection defined, one will be created.
@@ -89,16 +89,16 @@ This is the catalina properties file. It is specified relative to the _configura
 
 This is the server configuratioon XML file. It is specified relative to the _configurator.target.directory_ and will normally be _conf/server.xml_.
 
-### configurator.tomcat.image.directory
+### configurator.tomcat.image.directory [OPTIONAL]
 
 If there is an installation image of Tomcat that can be installed when none is located at _configurator.target.directory_, then this configuration setting identifies what directory it will be in.  This is used with _configurator.tomcat.image.zip.file_ to identify the exact file to unzip.
 
 
-### configurator.tomcat.image.zip.file
+### configurator.tomcat.image.zip.file [OPTIONAL]
 
 This is the installation image file of Tomcat. It is a file name only, with no directory information.  It must be a ZIP file.
 
-### configurator.tomcat.image.zip.stripdirectories
+### configurator.tomcat.image.zip.stripdirectories [OPTIONAL]
 
 The Tomcat installation image comes packed with Tomcat in a subdirectory that reflects the current version of Tomcat. This is not something that needs to be used when deploying.  Setting this to _1_ will remove that directory when the image is unpacked.  If it is set to _0_ and there is a version-coded base directory in the ZIP, the installation will not work correctly
 

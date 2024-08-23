@@ -66,6 +66,12 @@ public class Tomcat extends Configurator {
 	 * @throws IOException
 	 */
 	public String install() throws IOException {
+		// check whether there is an install image
+		if (!properties.containsKey(CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY) || !properties.containsKey(CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE)) {
+			throw new RuntimeException("Tomcat is not installed and no installation image was provided.");
+		}
+		
+		
 		Path installSource = Paths.get(properties.getProperty(CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY),
 				properties.getProperty(CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE));
 
@@ -81,6 +87,7 @@ public class Tomcat extends Configurator {
 		ZIPFileUtil.expandZIPFile(installSource, targetDir, overwrite, stripdir);
 
 		return getInstallDirectory();
+		 
 	}
 
 	/**
