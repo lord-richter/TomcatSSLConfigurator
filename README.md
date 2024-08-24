@@ -71,8 +71,6 @@ If this configuration option is not present, or the file cannot be found, it wil
 
 This is the absolute or relative directory where Tomcat is installed.  The certificate will be installed into the _conf_ subdirectory at this location.
 
-
-
 ### configurator.tomcat.connector.port.ssl
 
 This is the TLS/SSL port that Tomcat will be using.  It is normally _8443_.
@@ -114,4 +112,7 @@ This project depends on hidden security classes. It was compiled with the follow
        <arg>--add-exports</arg><arg>java.base/sun.security.util=ALL-UNNAMED</arg>
     </compilerArgs>
     
-    
+## Running
+
+This application uses Configurator.main() as the entry point.  The Java runtime will need to be called with a VM parameter to add the key store password, _-Dconfigurator.certificate.ssl.password=desired_password_, from an IDE.
+
