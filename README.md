@@ -114,5 +114,5 @@ This project depends on hidden security classes. It was compiled with the follow
     
 ## Running
 
-This application uses Configurator.main() as the entry point.  The Java runtime will need to be called with a VM parameter to add the key store password, _-Dconfigurator.certificate.ssl.password=desired_password_, from an IDE.
+This application uses Configurator.main() as the entry point.  The Java runtime will need to be run from an IDE and called with a VM parameter to add the key store password, _-Dconfigurator.certificate.ssl.password=desired_password_.
 
