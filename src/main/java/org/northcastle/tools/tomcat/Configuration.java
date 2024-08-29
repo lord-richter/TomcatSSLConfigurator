@@ -1,5 +1,5 @@
 /**
- * Configurator
+ * Configuration
  *
  * Version v1.0
  *

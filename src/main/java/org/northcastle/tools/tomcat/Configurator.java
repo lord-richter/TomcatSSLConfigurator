@@ -39,6 +39,7 @@ public abstract class Configurator {
 	 * @throws IOException
 	 */
 	public Configurator() throws IOException {
+		// each instance gets a reference to the configuration
 		config = Configuration.getInstance();
 	}
 
