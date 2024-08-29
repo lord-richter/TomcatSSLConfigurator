@@ -31,6 +31,35 @@ new Tomcat installation. It is designed to be used with other configuration util
 * If the server.xml file does not have a TLS/SSL connection defined, one will be created.
   * If there is already a TLS/SSL connection matching the SSL port configured, it will be updated.
 * The non-TLS connection specified in the configuration, if located, will be updated so that it redirects to the TLS/SSL port.
+
+## Open Source Notes
+
+The following open source packages are used.
+
+### org.projectlombok.lombok
+
+Used for programmer convenience, mainly to simplify logging.  Released under MIT license. No known vulnerabilities. 
+
+### org.jdom.jdom2
+
+Used for XML handling instead of the built in w3c code. This is easier to understand and is based on the Xalan parser. Xalan is vulnerable to malicious XSLT stylesheets that can corrupt the Java classes.  Additionally, there are XML handling bugs that can cause specially crafted XML documents to hang the parser.  Since the XML source is a known source that does not come from external users, and no XSLT is used, malicious input into this program is not deemed to be a concern.
+
+### org.apache.commons.commons-lang3
+
+This is used to generate random strings when a random password is needed.  It is released under Apache 2.0 and has no known vulnerabilities.
+
+### commons-io
+
+Used to provide a means to quietly delete from the file system.  It is released under Apache 2.0 and has no known vulnerabilities.
+
+### org.slf4j.slf4j-api
+
+Used for logging.  This is released under the MIT license and has no known vulnerabilities.
+
+### org.slf4j.slf4j-simple
+
+Used for logging.  This is released under the MIT license and has no known vulnerabilities.
+
   
 ## Configuration
 

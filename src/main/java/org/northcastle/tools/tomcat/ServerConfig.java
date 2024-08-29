@@ -28,11 +28,15 @@ import org.xml.sax.SAXException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * This class handles the update of the server.xml file.
+ * A DOM was not located for this, and so this class does not validate the XML against a DOM.
  */
 @Slf4j
 public class ServerConfig extends Configurator {
 
+	// Concrete element and attribute references are stored since we are not
+	// validating against a DOM and this fits nicely into how JDOM2 works.
+	
 	private static final String ELEMENT_SERVICE = "Service";
 	private static final String ELEMENT_CONNECTOR = "Connector";
 	private static final String ELEMENT_SSLHOSTCONFIG = "SSLHostConfig";
@@ -66,10 +70,10 @@ public class ServerConfig extends Configurator {
 	public ServerConfig() throws IOException {
 		validateConfiguration();
 
-		serverFile = Paths.get(properties.getProperty(CONFIGURATOR_TARGET_DIRECTORY),
-				properties.getProperty(CONFIGURATOR_TOMCAT_FILE_SERVERXML));
-		backupServerFile = Paths.get(properties.getProperty(CONFIGURATOR_TARGET_DIRECTORY),
-				properties.getProperty(CONFIGURATOR_TOMCAT_FILE_SERVERXML) + ".backup");
+		serverFile = Paths.get(config.getProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY),
+				config.getProperty(Configuration.CONFIGURATOR_TOMCAT_FILE_SERVERXML));
+		backupServerFile = Paths.get(config.getProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY),
+				config.getProperty(Configuration.CONFIGURATOR_TOMCAT_FILE_SERVERXML) + ".backup");
 		log.info("Server configuration file located at: " + serverFile);
 	}
 
@@ -96,7 +100,7 @@ public class ServerConfig extends Configurator {
 			// if this is an SSL port using the port number configured
 			if (element.hasAttributes() && element.getAttribute(ATTRIBUTE_PORT) != null
 					&& element.getAttributeValue(ATTRIBUTE_PORT)
-							.equalsIgnoreCase(properties.getProperty(CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL))) {
+							.equalsIgnoreCase(config.getProperty(Configuration.CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL))) {
 				// this is an SSL connector, so get all certificates element buried in it
 				// if there are more than one, we will take the first one for our purposes
 				List<Element> certificateNodes = XMLUtil.getElementsByType(element, ELEMENT_CERTIFICATE);
@@ -105,10 +109,10 @@ public class ServerConfig extends Configurator {
 
 					// configure the SSL
 					certificateNode.setAttribute(ATTRIBUTE_KEYTYPE,
-							properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM));
+							config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM));
 					certificateNode.setAttribute(ATTRIBUTE_KEYSTORE,
-							"conf/" + properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE));
-					certificateNode.setAttribute(ATTRIBUTE_KEYPASS, "${" + CONFIGURATOR_CERTIFICATE_SSL_PASSWORD + "}");
+							"conf/" + config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE));
+					certificateNode.setAttribute(ATTRIBUTE_KEYPASS, "${" + Configuration.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD + "}");
 				} else {
 					// we arrive here when there is no certificate, which is an error we do not
 					// handle
@@ -117,17 +121,17 @@ public class ServerConfig extends Configurator {
 
 				// update the connector attributes that we handle
 				element.setAttribute(ATTRIBUTE_SSLENABLED, "true");
-				element.setAttribute(ATTRIBUTE_PROTOCOL, properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL));
+				element.setAttribute(ATTRIBUTE_PROTOCOL, config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL));
 				// remember that we found a node
 				foundSSLNode = true;
 				// this is not an SSL port, but it is the expected non-SSL port, set redirect
 			} else if (element.hasAttributes() && element.getAttribute(ATTRIBUTE_PORT) != null
 					&& element.getAttributeValue(ATTRIBUTE_PORT)
-							.equalsIgnoreCase(properties.getProperty(CONFIGURATOR_TOMCAT_CONNECTOR_PORT))) {
+							.equalsIgnoreCase(config.getProperty(Configuration.CONFIGURATOR_TOMCAT_CONNECTOR_PORT))) {
 
 				// even if this is already set, go ahead and set it again
 				element.setAttribute(ATTRIBUTE_REDIRECTPORT,
-						properties.getProperty(CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL));
+						config.getProperty(Configuration.CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL));
 			}
 		}
 
@@ -161,17 +165,17 @@ public class ServerConfig extends Configurator {
 		Element connector = new Element(ELEMENT_CONNECTOR);
 
 		// define the certificate. All of the attributes are configurable
-		certificate.setAttribute(ATTRIBUTE_KEYTYPE, properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM));
+		certificate.setAttribute(ATTRIBUTE_KEYTYPE, config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM));
 		certificate.setAttribute(ATTRIBUTE_KEYSTORE,
-				"conf/" + properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE));
-		certificate.setAttribute(ATTRIBUTE_KEYPASS, "${" + CONFIGURATOR_CERTIFICATE_SSL_PASSWORD + "}");
+				"conf/" + config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE));
+		certificate.setAttribute(ATTRIBUTE_KEYPASS, "${" + Configuration.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD + "}");
 
 		// hard coded until such time as it becomes configurable
 		upgrade.setAttribute(ATTRIBUTE_CLASSNAME, "org.apache.coyote.http2.Http2Protocol");
 
 		// many values hard coded until configurable
-		connector.setAttribute(ATTRIBUTE_PORT, properties.getProperty(CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL));
-		connector.setAttribute(ATTRIBUTE_PROTOCOL, properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL));
+		connector.setAttribute(ATTRIBUTE_PORT, config.getProperty(Configuration.CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL));
+		connector.setAttribute(ATTRIBUTE_PROTOCOL, config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL));
 		connector.setAttribute(ATTRIBUTE_MAXTHREADS, "150");
 		connector.setAttribute(ATTRIBUTE_MAXPARMCOUNT, "1000");
 		connector.setAttribute(ATTRIBUTE_SSLENABLED, "true");
@@ -224,10 +228,10 @@ public class ServerConfig extends Configurator {
 
 	@Override
 	protected boolean validateConfiguration() {
-		return properties.containsKey(CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM)
-				&& properties.containsKey(CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE)
-				&& properties.containsKey(CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL)
-				&& properties.containsKey(CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL);
+		return config.containsKey(Configuration.CONFIGURATOR_CERTIFICATE_SSL_ALGORITHM)
+				&& config.containsKey(Configuration.CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE)
+				&& config.containsKey(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PROTOCOL)
+				&& config.containsKey(Configuration.CONFIGURATOR_TOMCAT_CONNECTOR_PORT_SSL);
 	}
 
 }

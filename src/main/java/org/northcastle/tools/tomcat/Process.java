@@ -61,9 +61,9 @@ public class Process extends Configurator {
 		// if it is not, try to install it. Get actual install location for later.
 		Tomcat tomcat = new Tomcat();
 		if (!tomcat.isInstalled()) {
-			properties.put(CONFIGURATOR_TARGET_DIRECTORY, tomcat.install());
+			config.setProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY, tomcat.install());
 		} else {
-			properties.put(CONFIGURATOR_TARGET_DIRECTORY, tomcat.getInstallDirectory());
+			config.setProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY, tomcat.getInstallDirectory());
 		}
 
 		// do we need a certificate?
@@ -91,8 +91,8 @@ public class Process extends Configurator {
 	 */
 	protected Path updateCatalinaProperties() throws IOException {
 		// locate the catalina properties file
-		Path catalinaPath = Paths.get(properties.getProperty(CONFIGURATOR_TARGET_DIRECTORY),
-				properties.getProperty(CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES));
+		Path catalinaPath = Paths.get(config.getProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY),
+				config.getProperty(Configuration.CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES));
 		InputStream resource = new FileInputStream(catalinaPath.toFile());
 
 		// read properties and close file
@@ -101,8 +101,8 @@ public class Process extends Configurator {
 		resource.close();
 
 		// store password property
-		catalina.setProperty(CONFIGURATOR_CERTIFICATE_SSL_PASSWORD,
-				properties.getProperty(CONFIGURATOR_CERTIFICATE_SSL_PASSWORD));
+		catalina.setProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD,
+				config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD));
 
 		// write the catalina properties file
 		catalina.store(new FileOutputStream(catalinaPath.toFile()), null);
@@ -117,7 +117,7 @@ public class Process extends Configurator {
 	 */
 	@Override
 	protected boolean validateConfiguration() {
-		return properties.containsKey(CONFIGURATOR_TARGET_DIRECTORY);
+		return config.containsKey(Configuration.CONFIGURATOR_TARGET_DIRECTORY);
 	}
 
 }

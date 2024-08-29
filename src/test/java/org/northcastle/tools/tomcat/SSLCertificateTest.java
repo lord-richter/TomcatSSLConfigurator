@@ -74,8 +74,8 @@ class SSLCertificateTest {
 			public void execute() throws Throwable {
 				// delete target file
 				FileUtils.deleteQuietly(keystoreFile.toFile());
-				Configurator.properties.remove("configurator.certificate.ssl.password");
-				Configurator.properties.remove("configurator.certificate.ssl.source.keystore");
+				certificate.config.remove("configurator.certificate.ssl.password");
+				certificate.config.remove("configurator.certificate.ssl.source.keystore");
 				certificate.installCertificate();
 				assertTrue(Files.exists(keystoreFile));
 			}
@@ -93,8 +93,8 @@ class SSLCertificateTest {
 			public void execute() throws Throwable {
 				// delete target file
 				FileUtils.deleteQuietly(keystoreFile.toFile());
-				Configurator.properties.remove("configurator.certificate.ssl.password");
-				Configurator.properties.setProperty("configurator.certificate.ssl.source.keystore",
+				certificate.config.remove("configurator.certificate.ssl.password");
+				certificate.config.setProperty("configurator.certificate.ssl.source.keystore",
 						"src/main/resources/source.keystore");
 				certificate.installCertificate();
 				assertTrue(Files.exists(keystoreFile));
@@ -117,7 +117,7 @@ class SSLCertificateTest {
 					Files.createFile(keystoreFile);
 				}
 				// make sure a password is set
-				Configurator.properties.setProperty("configurator.certificate.ssl.password", "defaultPassword");
+				certificate.config.setProperty("configurator.certificate.ssl.password", "defaultPassword");
 				assertTrue(certificate.checkCertificate());
 			}
 		});
@@ -135,10 +135,10 @@ class SSLCertificateTest {
 				// delete target file
 				FileUtils.deleteQuietly(keystoreFile.toFile());
 				// make sure there is a source keystore
-				Configurator.properties.setProperty("configurator.certificate.ssl.source.keystore",
+				certificate.config.setProperty("configurator.certificate.ssl.source.keystore",
 						"src/main/resources/source.keystore");
 				// make sure there is a password set
-				Configurator.properties.setProperty("configurator.certificate.ssl.password", "defaultPassword");
+				certificate.config.setProperty("configurator.certificate.ssl.password", "defaultPassword");
 				certificate.installCertificate();
 				assertTrue(Files.exists(keystoreFile));
 			}
@@ -157,7 +157,7 @@ class SSLCertificateTest {
 				// make sure there is NO file there
 				FileUtils.deleteQuietly(keystoreFile.toFile());
 				// make sure there is a password set (not needed)
-				Configurator.properties.setProperty("configurator.certificate.ssl.password", "defaultPassword");
+				certificate.config.setProperty("configurator.certificate.ssl.password", "defaultPassword");
 				assertFalse(certificate.checkCertificate());
 			}
 		});
@@ -178,7 +178,7 @@ class SSLCertificateTest {
 					Files.createFile(keystoreFile);
 				}
 				// make sure a password is NOT set
-				Configurator.properties.remove("configurator.certificate.ssl.password");
+				certificate.config.remove("configurator.certificate.ssl.password");
 				assertFalse(certificate.checkCertificate());
 			}
 		});
