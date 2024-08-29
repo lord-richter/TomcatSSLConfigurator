@@ -18,7 +18,8 @@ import org.northcastle.util.ZIPFileUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
+ * This is the class for handling Tomcat installations.
+ * It is capable of unpacking a Tomcat image from a ZIP file, if this is necessary.
  */
 @Slf4j
 public class Tomcat extends Configurator {
@@ -45,7 +46,7 @@ public class Tomcat extends Configurator {
 		}
 
 		// convert the target property into a Path for later
-		targetDir = Paths.get(properties.getProperty(CONFIGURATOR_TARGET_DIRECTORY));
+		targetDir = Paths.get(config.getProperty(Configuration.CONFIGURATOR_TARGET_DIRECTORY));
 
 		log.info("Tomcat is currently " + (isInstalled() ? "Installed" : "Not Installed"));
 	}
@@ -67,20 +68,20 @@ public class Tomcat extends Configurator {
 	 */
 	public String install() throws IOException {
 		// check whether there is an install image
-		if (!properties.containsKey(CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY) || !properties.containsKey(CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE)) {
+		if (!config.containsKey(Configuration.CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY) || !config.containsKey(Configuration.CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE)) {
 			throw new RuntimeException("Tomcat is not installed and no installation image was provided.");
 		}
 		
 		
-		Path installSource = Paths.get(properties.getProperty(CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY),
-				properties.getProperty(CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE));
+		Path installSource = Paths.get(config.getProperty(Configuration.CONFIGURATOR_TOMCAT_IMAGE_DIRECTORY),
+				config.getProperty(Configuration.CONFIGURATOR_TOMCAT_IMAGE_ZIP_FILE));
 
 		// overwrite default is true
 		boolean overwrite = true;
 
 		// the option to remove leading directories defaults to 0 if not specified
-		int stripdir = (properties.containsKey(CONFIGURATOR_TOMCAT_IMAGE_ZIP_STRIPDIRECTORIES)
-				? Integer.parseInt(properties.getProperty(CONFIGURATOR_TOMCAT_IMAGE_ZIP_STRIPDIRECTORIES))
+		int stripdir = (config.containsKey(Configuration.CONFIGURATOR_TOMCAT_IMAGE_ZIP_STRIPDIRECTORIES)
+				? Integer.parseInt(config.getProperty(Configuration.CONFIGURATOR_TOMCAT_IMAGE_ZIP_STRIPDIRECTORIES))
 				: 0);
 
 		// call ZIP to unpack
@@ -103,9 +104,9 @@ public class Tomcat extends Configurator {
 		// get for target directory + conf directory
 		installed = Files.exists(Paths.get(getInstallDirectory(), "conf"))
 				&& Files.exists(
-						Paths.get(getInstallDirectory(), properties.getProperty(CONFIGURATOR_TOMCAT_FILE_SERVERXML)))
+						Paths.get(getInstallDirectory(), config.getProperty(Configuration.CONFIGURATOR_TOMCAT_FILE_SERVERXML)))
 				&& Files.exists(Paths.get(getInstallDirectory(),
-						properties.getProperty(CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES)));
+						config.getProperty(Configuration.CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES)));
 
 		return installed;
 
@@ -125,8 +126,8 @@ public class Tomcat extends Configurator {
 
 	@Override
 	protected boolean validateConfiguration() {
-		return properties.containsKey(CONFIGURATOR_TARGET_DIRECTORY)
-				&& properties.containsKey(CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES)
-				&& properties.containsKey(CONFIGURATOR_TOMCAT_FILE_SERVERXML);
+		return config.containsKey(Configuration.CONFIGURATOR_TARGET_DIRECTORY)
+				&& config.containsKey(Configuration.CONFIGURATOR_TOMCAT_FILE_CATALINAPROPERTIES)
+				&& config.containsKey(Configuration.CONFIGURATOR_TOMCAT_FILE_SERVERXML);
 	}
 }

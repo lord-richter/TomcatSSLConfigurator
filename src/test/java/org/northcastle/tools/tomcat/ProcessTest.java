@@ -64,10 +64,16 @@ class ProcessTest {
 
 			@Override
 			public void execute() throws Throwable {
-
-				new Tomcat().install();
+				Tomcat tomcat = new Tomcat();
+				tomcat.config.setProperty("configurator.tomcat.image.directory","src/main/resources/10.1.28-Windows-x64");
+				tomcat.config.setProperty("configurator.tomcat.image.zip.file","apache-tomcat-10.1.28-windows-x64.zip");
+				tomcat.config.setProperty("configurator.tomcat.image.zip.stripdirectories","1");
+				
+				tomcat.install();
+				
 				Process process = new Process();
-				Configurator.properties.setProperty("configurator.certificate.ssl.password", "defaultPassword");
+				process.config.setProperty("configurator.certificate.ssl.password", "defaultPassword");
+
 				Path catalinaFile = process.updateCatalinaProperties();
 				String content = Files.readString(catalinaFile);
 				assertTrue(content.contains("defaultPassword"));

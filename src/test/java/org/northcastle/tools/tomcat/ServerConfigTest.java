@@ -28,7 +28,7 @@ import org.junit.jupiter.api.function.Executable;
  */
 class ServerConfigTest {
 
-	static ServerConfig config;
+	static ServerConfig serverConfig;
 	static Path configFile;
 	static String testNoConnection = "src/test/resources/testDefault.xml";
 	static Path testNoConnectionFile;
@@ -40,8 +40,8 @@ class ServerConfigTest {
 	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		config = new ServerConfig();
-		configFile = Paths.get(config.getServerConfigFile());
+		serverConfig = new ServerConfig();
+		configFile = Paths.get(serverConfig.getServerConfigFile());
 		testNoConnectionFile = Paths.get(testNoConnection);
 		testUpdateConnectionFile = Paths.get(testUpdateConnection);
 	}
@@ -76,7 +76,7 @@ class ServerConfigTest {
 
 			@Override
 			public void execute() throws Throwable {
-				assertTrue(config.validateConfiguration());
+				assertTrue(serverConfig.validateConfiguration());
 			}
 		});
 	}
@@ -93,12 +93,11 @@ class ServerConfigTest {
 				new Tomcat().install();
 				FileUtils.deleteQuietly(configFile.toFile());
 				Files.copy(testNoConnectionFile, configFile);
-				config.configureSSLConnection();
-				String expected = Configurator.properties
-						.getProperty(Configurator.CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE);
+				serverConfig.configureSSLConnection();
+				String expected = serverConfig.config.getProperty(Configuration.CONFIGURATOR_CERTIFICATE_SSL_KEYSTORE);
 				String content = Files.readString(configFile);
 				assertTrue(content.contains(expected));
-				assertTrue(content.contains(Configurator.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD));
+				assertTrue(content.contains(Configuration.CONFIGURATOR_CERTIFICATE_SSL_PASSWORD));
 			}
 		});
 	}
@@ -111,7 +110,7 @@ class ServerConfigTest {
 		assertThrows(Exception.class, () -> {
 			new Tomcat().remove();
 			FileUtils.deleteQuietly(configFile.toFile());
-			config.configureSSLConnection();
+			serverConfig.configureSSLConnection();
 		});
 	}
 
